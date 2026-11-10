@@ -1,0 +1,20 @@
+# Peluncuran Aplikasi Mobile
+
+## Kecepatan
+- Proses checkout hanya 2 langkah
+- Sinkronisasi realtime antar perangkat
+- Mode offline tetap jalan
+
+## Keamanan
+- Enkripsi end-to-end
+- Login biometrik
+- Verifikasi dua langkah
+
+## Harga
+- Paket gratis untuk mulai
+- Pro Rp49.000 per bulan
+- Diskon tahunan 20 persen
+
+## Mulai Sekarang
+- Unduh di Play Store dan App Store
+- Setup kurang dari satu menit

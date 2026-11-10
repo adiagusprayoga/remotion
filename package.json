@@ -1,17 +1,22 @@
 {
-  "name": "remotion-demo",
+  "name": "remotion",
   "version": "1.0.0",
   "private": true,
-  "description": "Remotion video project",
+  "description": "Prompt-driven motion video generator built with Remotion",
   "scripts": {
     "start": "remotion studio --host 0.0.0.0 --port 3000",
     "studio": "remotion studio --host 0.0.0.0 --port 3000",
-    "build": "remotion render HelloWorld out/video.mp4",
+    "video": "tsx scripts/make-video.ts",
+    "video:props": "tsx scripts/make-video.ts --no-render",
+    "video:render": "tsx scripts/make-video.ts",
+    "build": "remotion render PromptVideo out/video.mp4",
     "render": "remotion render",
+    "typecheck": "tsc --noEmit",
     "upgrade": "remotion upgrade"
   },
   "dependencies": {
     "@remotion/cli": "4.0.542",
+    "@remotion/transitions": "^4.0.542",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "remotion": "4.0.542"
@@ -19,6 +24,7 @@
   "devDependencies": {
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
+    "tsx": "^4.20.6",
     "typescript": "5.8.2"
   }
 }
