@@ -13,13 +13,6 @@ export type GenerateOptions = {
 const TRANSITIONS: TransitionType[] = ["fade", "slide", "wipe", "flip"];
 const ANIMATIONS: TextAnimation[] = ["fadeUp", "slideLeft", "scaleIn", "fadeIn"];
 
-export const slugify = (value: string): string =>
-  value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
-    .slice(0, 48) || "video";
-
 const clean = (line: string): string =>
   line
     .replace(/^#{1,6}\s*/, "")
@@ -82,15 +75,14 @@ export const generateSpecFromPrompt = (
     blocks.push({ body: [prompt] });
   }
 
-  const firstBlockTitle =
-    clean(blocks[0].title ?? blocks[0].body[0] ?? prompt);
+  const introBlock = blocks[0];
+  const introTitle = clean(introBlock.title ?? introBlock.body[0] ?? prompt);
+  const introBullets = introBlock.title
+    ? introBlock.body.map(clean).filter(Boolean)
+    : introBlock.body.map(clean).filter(Boolean).slice(1);
 
   const scenes: SceneSpec[] = [];
   const durationInFrames = Math.round(secondsPerScene * fps);
-
-  const introSubtitle = blocks[0].title
-    ? clean(blocks[0].body[0] ?? "")
-    : "";
 
   scenes.push({
     id: "intro",
@@ -101,18 +93,19 @@ export const generateSpecFromPrompt = (
       colors: theme.palette[0],
       angle: 135,
     },
-    title: titleCase(firstBlockTitle),
-    subtitle: introSubtitle || undefined,
+    title: titleCase(introTitle),
+    subtitle: introBlock.title ? introBullets[0] : undefined,
+    bulletPoints:
+      introBullets.length > 1 && !introBlock.title
+        ? introBullets.slice(0, 4)
+        : undefined,
     animation: "fadeUp",
     accentColor: theme.accentColor,
   });
 
-  blocks.forEach((block, index) => {
+  blocks.slice(1).forEach((block, index) => {
     const body = block.body.map(clean).filter(Boolean);
-    const bullets = body.filter((line) => !isHeadingLine(line));
-    if (block.title === firstBlockTitle && index === 0 && bullets.length <= 1) {
-      return;
-    }
+    const bullets = block.title ? body : body.slice(1);
     if (!block.title && bullets.length === 0) return;
 
     scenes.push({
@@ -124,33 +117,35 @@ export const generateSpecFromPrompt = (
         colors: theme.palette[(index + 1) % theme.palette.length],
         angle: 135,
       },
-      title: block.title ? titleCase(block.title) : titleCase(bullets[0] ?? ""),
+      title: block.title ? titleCase(block.title) : titleCase(body[0] ?? ""),
       bulletPoints: bullets.slice(0, 5),
       animation: ANIMATIONS[index % ANIMATIONS.length],
       accentColor: theme.accentColor,
     });
   });
 
+  // A single-scene spec renders as a static card. Add a closing scene so even
+  // one-line prompts produce a moving video.
   if (scenes.length === 1) {
     scenes.push({
-      id: "scene-1",
-      durationInFrames,
+      id: "outro",
+      durationInFrames: Math.round(2.5 * fps),
       transition: "fade",
       background: {
         type: "gradient",
-        colors: theme.palette[1],
+        colors: theme.palette[1 % theme.palette.length],
         angle: 135,
       },
-      title: "Detail",
-      bulletPoints: lines.slice(1, 5).map(clean),
-      animation: "slideLeft",
+      title: introTitle,
+      subtitle: "Terima kasih",
+      animation: "scaleIn",
       accentColor: theme.accentColor,
     });
   }
 
   return {
     meta: {
-      title: titleCase(firstBlockTitle),
+      title: titleCase(introTitle),
       fps,
       width,
       height,
