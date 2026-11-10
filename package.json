@@ -1,0 +1,24 @@
+{
+  "name": "remotion-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remotion video project",
+  "scripts": {
+    "start": "remotion studio --host 0.0.0.0 --port 3000",
+    "studio": "remotion studio --host 0.0.0.0 --port 3000",
+    "build": "remotion render HelloWorld out/video.mp4",
+    "render": "remotion render",
+    "upgrade": "remotion upgrade"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.542",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "remotion": "4.0.542"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
+    "typescript": "5.8.2"
+  }
+}
